@@ -2147,13 +2147,16 @@ PRIMARY KEY  (id)
 		/**
 		 * Renders and initializes a radio field or a collection of radio fields based on the $field array.
 		 * Images/icons are used in place of the HTML radio buttons.
+         *
+         * @since 1.0
+		 * @since 2.5.10    Change from protected to public for Gravity Forms 2.5.
 		 *
 		 * @param array $field Field array containing the configuration options of this field.
 		 * @param bool  $echo  True to echo the output to the screen, false to simply return the contents as a string.
 		 *
 		 * @return string Returns the markup for the radio buttons.
 		 */
-		protected function settings_radio_image( $field, $echo = true ) {
+		public function settings_radio_image( $field, $echo = true ) {
 
 			$field['type'] = 'radio'; // Making sure type is set to radio.
 
@@ -2216,9 +2219,15 @@ PRIMARY KEY  (id)
 		/**
 		 * Renders the HTML for the schedule setting.
 		 *
+		 * @since 1.0
+		 * @since 2.5.10    Added the $echo param.
+         *
 		 * @param array $field The field properties.
+		 * @param bool  $echo  Whether to output the setting.
+		 *
+		 * @return string
 		 */
-		public function settings_schedule( $field ) {
+		public function settings_schedule( $field, $echo = true ) {
 
 			$form = $this->get_current_form();
 
@@ -2314,7 +2323,7 @@ PRIMARY KEY  (id)
 				),
 			);
 
-			$this->settings_checkbox( $scheduled );
+			$html = $this->settings_checkbox( $scheduled, false );
 
 			$enabled = $this->get_setting( 'scheduled', false );
 			$schedule_type_setting = $this->get_setting( 'schedule_type', 'delay' );
@@ -2322,6 +2331,7 @@ PRIMARY KEY  (id)
 			$schedule_date_style = ( $schedule_type_setting == 'date' ) ? '' : 'style="display:none;"';
 			$schedule_delay_style = ( $schedule_type_setting == 'delay' ) ? '' : 'style="display:none;"';
 			$schedule_date_fields_style = ( $schedule_type_setting == 'date_field' ) ? '' : 'style="display:none;"';
+			ob_start();
 			?>
 			<div class="gravityflow-schedule-settings" <?php echo $schedule_style ?> >
 				<div class="gravityflow-schedule-type-container">
@@ -2396,16 +2406,27 @@ PRIMARY KEY  (id)
 			</script>
 			<?php
 
+			$html .= trim( ob_get_clean() );
+
+			if ( $echo ) {
+				echo $html;
+			}
+
+			return $html;
 		}
 
 		/**
 		 * Renders the HTML for the due date setting.
 		 *
 		 * @since 2.5
+		 * @since 2.5.10 Added the $echo param.
 		 *
 		 * @param array $field The field properties.
+		 * @param bool  $echo  Whether to output the setting.
+		 *
+		 * @return string
 		 */
-		public function settings_due_date( $field ) {
+		public function settings_due_date( $field, $echo = true ) {
 
 			$form = $this->get_current_form();
 
@@ -2520,7 +2541,7 @@ PRIMARY KEY  (id)
 				'required'      => true,
 			);
 
-			$this->settings_checkbox( $due_date );
+			$html = $this->settings_checkbox( $due_date, false );
 
 			$enabled = $this->get_setting( 'due_date', false );
 			$due_date_type_setting = $this->get_setting( 'due_date_type', 'delay' );
@@ -2529,6 +2550,7 @@ PRIMARY KEY  (id)
 			$due_date_delay_style = ( $due_date_type_setting == 'delay' ) ? '' : 'style="display:none;"';
 			$due_date_date_fields_style = ( $due_date_type_setting == 'date_field' ) ? '' : 'style="display:none;"';
 
+			ob_start();
 			?>
 			<div class="gravityflow-due-date-settings" <?php echo $due_date_style; ?> >
 				<div class="gravityflow-due-date-type-container" class="gravityflow-sub-setting">
@@ -2625,14 +2647,29 @@ PRIMARY KEY  (id)
 				})(jQuery);
 			</script>
 			<?php
+
+			$html .= trim( ob_get_clean() );
+
+            if ( $echo ) {
+				echo $html;
+			}
+
+			return $html;
 		}
 
 		/**
 		 * Renders the HTML for the expiration setting.
+         *
+         *
+         * @since 1.0
+         * @since 2.5.10    Added the $echo param.
 		 *
-		 * @param array $field The field properties.
+		 * @param array $field  The field properties.
+		 * @param bool  $echo   Whether to output the setting.
+		 *
+		 * @return string
 		 */
-		public function settings_expiration( $field ) {
+		public function settings_expiration( $field, $echo = true ) {
 
 			$form = $this->get_current_form();
 
@@ -2726,7 +2763,7 @@ PRIMARY KEY  (id)
 				),
 			);
 
-			$this->settings_checkbox( $expiration );
+			$html = $this->settings_checkbox( $expiration, false );
 
 			$enabled = $this->get_setting( 'expiration', false );
 			$expiration_type_setting = $this->get_setting( 'expiration_type', 'delay' );
@@ -2735,6 +2772,7 @@ PRIMARY KEY  (id)
 			$expiration_delay_style = ( $expiration_type_setting == 'delay' ) ? '' : 'style="display:none;"';
 			$expiration_date_fields_style = ( $expiration_type_setting == 'date_field' ) ? '' : 'style="display:none;"';
 
+			ob_start();
 			?>
 			<div class="gravityflow-expiration-settings" <?php echo $expiration_style ?> >
 				<div class="gravityflow-expiration-type-container" class="gravityflow-sub-setting">
@@ -2841,6 +2879,14 @@ PRIMARY KEY  (id)
 				})(jQuery);
 			</script>
 			<?php
+
+            $html .= trim( ob_get_clean() );
+
+			if ( $echo ) {
+				echo $html;
+			}
+
+			return $html;
 		}
 
 		/**
@@ -2849,15 +2895,21 @@ PRIMARY KEY  (id)
 		 * The container will be displayed or hidden depending on the value of the step_highlight checkbox field.
 		 *
 		 * @since 1.9.2
+		 * @since 2.5.10    Added the $echo param.
 		 *
 		 * @param array $field The field properties.
 		 *
 		 * @return string
 		 */
-		public function settings_step_highlight( $field ) {
+		public function settings_step_highlight( $field, $echo = true ) {
 			$field = $this->prepare_settings_step_highlight( $field );
 
-			return $this->settings_step_highlight_container( $field );
+			$html = $this->settings_step_highlight_container( $field, false );
+
+			if ( $echo ) {
+				echo $html;
+			}
+			return $html;
 		}
 
 		/**
@@ -2911,24 +2963,27 @@ PRIMARY KEY  (id)
 		 * The container will be displayed or hidden depending on the value of the step_highlight checkbox field.
 		 *
 		 * @since 1.9.2
+		 * @since 2.5.10    Added the $echo param.
 		 *
 		 * @param array $field The field properties.
 		 *
 		 * @return string|void
 		 */
-		public function settings_step_highlight_container( $field ) {
+		public function settings_step_highlight_container( $field, $echo = true ) {
 			$step_settings = rgar( $field, 'settings' );
 
 			if ( empty( $step_settings ) ) {
 				return '';
 			}
 
-			$this->settings_checkbox( $step_settings['step_highlight'] );
+			$html = $this->settings_checkbox( $step_settings['step_highlight'], false );
 
 			$enabled = $this->get_setting( 'step_highlight', false );
 			$step_highlight_style = $enabled ? '' : 'style="display:none;"';
 			$step_highlight_type_setting = $this->get_setting( 'step_highlight_type', 'color' );
 			$step_highlight_color_style = ( $step_highlight_type_setting == 'color' ) ? '' : 'style="display:none;"';
+
+			ob_start();
 			?>
 			<div class="gravityflow-step-highlight-settings" <?php echo $step_highlight_style; ?> >
 				<div class="gravityflow-step-highlight-type-container">
@@ -2952,15 +3007,27 @@ PRIMARY KEY  (id)
 			</script>
 			<?php
 
-			return;
+			$html .= trim( ob_get_clean() );
+
+			if ( $echo ) {
+				echo $html;
+			}
+			return $html;
 		}
 
 		/**
 		 * Renders the tabs setting.
+         *
+		 * @since 1.0
+		 * @since 2.5.10    Added the $echo param.
 		 *
 		 * @param array $tabs_field The field properties.
+		 * @param bool  $echo       Whether to output the setting.
+		 *
+		 * @return string
 		 */
-		public function settings_tabs( $tabs_field ) {
+		public function settings_tabs( $tabs_field, $echo = true ) {
+		    ob_start();
 			printf( '<div id="tabs-%s">', $tabs_field['name'] );
 			echo '<ul>';
 			foreach ( $tabs_field['tabs'] as $i => $tab ) {
@@ -2996,6 +3063,13 @@ PRIMARY KEY  (id)
 				})(jQuery);
 			</script>
 			<?php
+
+			$html = trim( ob_get_clean() );
+
+			if ( $echo ) {
+				echo $html;
+			}
+			return $html;
 		}
 
 		/**
@@ -3232,36 +3306,74 @@ PRIMARY KEY  (id)
 		/**
 		 * Renders the HTML for the visual editor setting.
 		 *
+		 * @since 1.0
+         * @since 2.5.10 Added the $echo param.
+		 *
 		 * @param array $field The field properties.
+		 * @param bool  $echo   Whether to output the setting.
+		 *
+		 * @return string
 		 */
-		public function settings_visual_editor( $field ) {
+		public function settings_visual_editor( $field, $echo = true ) {
 
 			$default_value = rgar( $field, 'value' ) ? rgar( $field, 'value' ) : rgar( $field, 'default_value' );
 			$value         = $this->get_setting( $field['name'], $default_value );
 			$id            = '_gaddon_setting_' . $field['name'];
+
+			ob_start();
+
 			echo "<span class='mt-{$id}'></span>";
 			wp_editor( $value, $id, array(
 				'autop'        => false,
 				'editor_class' => 'merge-tag-support mt-wp_editor mt-manual_position mt-position-right',
 			) );
+
+			$html = trim( ob_get_clean() );
+
+			if ( $echo ) {
+				echo $html;
+			}
+			return $html;
 		}
 
 		/**
 		 * Renders the HTML for the routing setting.
+		 *
+		 * @since 1.0
+		 * @since 2.5.10 Added the $field and $echo params.
+		 *
+		 * @param array $field The field properties.
+		 * @param bool  $echo   Whether to output the setting.
+		 *
+		 * @return string
 		 */
-		public function settings_routing() {
-			echo '<div id="gform_routing_setting" class="gravityflow-routing" data-field_name="_gaddon_setting_routing" data-field_id="routing" ></div>';
+		public function settings_routing( $field, $echo = true ) {
+
+			$html = '<div id="gform_routing_setting" class="gravityflow-routing" data-field_name="_gaddon_setting_routing" data-field_id="routing" ></div>';
 			$field['name'] = 'routing';
 
-			$this->settings_hidden( $field );
+			$html .= $this->settings_hidden( $field, false );
+
+			if ( $echo ) {
+				echo $html;
+			}
+			return $html;
 		}
 
 		/**
 		 * Renders the HTML for the user routing setting.
 		 *
+		 * @since 1.0
+		 * @since 2.5.10 Added the $echo param.
+		 *
 		 * @param array $field The field properties.
+		 * @param bool  $echo  Whether to output the setting.
+		 *
+		 * @param array $field The field properties.
+		 *
+		 * @return string
 		 */
-		public function settings_user_routing( $field ) {
+		public function settings_user_routing( $field, $echo = true ) {
 			$name = $field['name'];
 			$id = isset( $field['id'] ) ?  $field['id'] : 'gform_user_routing_setting_' . $name;
 
@@ -3269,15 +3381,24 @@ PRIMARY KEY  (id)
 			$html .= ( $name === 'workflow_notification_routing' ) ? '' : rgar( $field, 'description' );
 			$html .= $this->settings_hidden( $field, false );
 
-			echo $html;
+			if ( $echo ) {
+				echo $html;
+			}
+			return $html;
 		}
 
 		/**
 		 * Renders the HTML for the step selector setting.
 		 *
+		 * @since 1.0
+		 * @since 2.5.10 Added the $echo param.
+		 *
 		 * @param array $field The field properties.
+		 * @param bool  $echo  Whether to output the setting.
+		 *
+		 * @return string
 		 */
-		public function settings_step_selector( $field ) {
+		public function settings_step_selector( $field, $echo = true ) {
 			$form = $this->get_current_form();
 			$feed_id = $this->get_current_feed_id();
 			$form_id = absint( $form['id'] );
@@ -3302,15 +3423,26 @@ PRIMARY KEY  (id)
 				'choices'       => $step_choices,
 			);
 
-			$this->settings_select( $step_selector_field );
+			$html = $this->settings_select( $step_selector_field );
+
+			if ( $echo ) {
+				echo $html;
+			}
+			return $html;
 		}
 
 		/**
 		 * Renders the HTML for the editable fields setting.
 		 *
+		 * @since 1.0
+		 * @since 2.5.10 Added the $echo param.
+		 *
 		 * @param array $field The field properties.
+		 * @param bool  $echo  Whether to output the setting.
+		 *
+		 * @return string
 		 */
-		public function settings_editable_fields( $field ) {
+		public function settings_editable_fields( $field, $echo = true ) {
 			$form = $this->get_current_form();
 			$choices = array();
 			if ( isset( $form['fields'] ) && is_array( $form['fields'] ) ) {
@@ -3323,16 +3455,34 @@ PRIMARY KEY  (id)
 			}
 			$field['choices'] = $choices;
 
-			$this->settings_select( $field );
+			$html = $this->settings_select( $field );
+
+			if ( $echo ) {
+				echo $html;
+			}
+
+			return $html;
 		}
 
 		/**
 		 * Displays the setting HTML.
 		 *
-		 * @param array $field The setting properties.
+		 * @since 1.0
+		 * @since 2.5.10 Added the $echo param.
+		 *
+		 * @param array $field The field properties.
+		 * @param bool  $echo  Whether to output the setting.
+		 *
+		 * @return mixed
 		 */
-		public function settings_html( $field ) {
-			echo $field['html'];
+		public function settings_html( $field, $echo = true ) {
+			$html = $field['html'];
+
+			if ( $echo ) {
+				echo $html;
+			}
+
+			return $html;
 		}
 
 		/**
@@ -4993,8 +5143,10 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 
 			$html = wp_dropdown_pages( $args );
 
+			if ( $echo ) {
+				echo $html;
+			}
 			return $html;
-
 		}
 
 		/**
@@ -8021,7 +8173,7 @@ AND m.meta_value='queued'";
 		/**
 		 * Renders the display fields setting.
 		 */
-		public function settings_display_fields() {
+		public function settings_display_fields( $field, $echo = true ) {
 			$mode_field = array(
 				'name'     => 'display_fields_mode',
 				'label'    => '',
@@ -8083,11 +8235,11 @@ AND m.meta_value='queued'";
 				'class' => 'gravityflow-multiselect-ui',
 				'choices' => $fields_as_choices,
 			);
-			$this->settings_select( $mode_field );
+			$html = $this->settings_select( $mode_field );
 			$style = $mode_value == 'all_fields' ? 'style="display:none;"' : '';
-			echo '<div class="gravityflow_display_fields_selected_container" ' . $style . '>';
-			$this->settings_select( $multiselect_field );
-			echo '</div>';
+			$html .= '<div class="gravityflow_display_fields_selected_container" ' . $style . '>';
+			$html .= $this->settings_select( $multiselect_field, false );
+			$html .= '</div>';
 
 			if ( $has_product_field ) {
 
@@ -8102,10 +8254,16 @@ AND m.meta_value='queued'";
 						),
 					),
 				);
-				echo '<div style="margin-top:5px;">';
-				$this->settings_checkbox( $display_summary_field );
-				echo '</div>';
+				$html .= '<div style="margin-top:5px;">';
+				$html .= $this->settings_checkbox( $display_summary_field, false );
+				$html .= '</div>';
 			}
+
+			if ( $echo ) {
+				echo $html;
+			}
+
+			return $html;
 		}
 
 		/**
