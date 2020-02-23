@@ -3423,7 +3423,7 @@ PRIMARY KEY  (id)
 				'choices'       => $step_choices,
 			);
 
-			$html = $this->settings_select( $step_selector_field );
+			$html = $this->settings_select( $step_selector_field, false );
 
 			if ( $echo ) {
 				echo $html;
@@ -3455,7 +3455,7 @@ PRIMARY KEY  (id)
 			}
 			$field['choices'] = $choices;
 
-			$html = $this->settings_select( $field );
+			$html = $this->settings_select( $field, false );
 
 			if ( $echo ) {
 				echo $html;
@@ -8235,7 +8235,7 @@ AND m.meta_value='queued'";
 				'class' => 'gravityflow-multiselect-ui',
 				'choices' => $fields_as_choices,
 			);
-			$html = $this->settings_select( $mode_field );
+			$html = $this->settings_select( $mode_field, false );
 			$style = $mode_value == 'all_fields' ? 'style="display:none;"' : '';
 			$html .= '<div class="gravityflow_display_fields_selected_container" ' . $style . '>';
 			$html .= $this->settings_select( $multiselect_field, false );
