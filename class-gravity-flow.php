@@ -2922,7 +2922,7 @@ PRIMARY KEY  (id)
 		 * @return array
 		 */
 		public function prepare_settings_step_highlight( $field ) {
-			unset( $field['settings'] );
+			$field['settings'] = array();
 
 			$step_highlight = array(
 				'name'     => 'step_highlight',
