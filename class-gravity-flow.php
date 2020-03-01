@@ -2922,7 +2922,7 @@ PRIMARY KEY  (id)
 		 * @return array
 		 */
 		public function prepare_settings_step_highlight( $field ) {
-			$field['settings'] = array();
+			$settings = array();
 
 			$step_highlight = array(
 				'name'     => 'step_highlight',
@@ -2934,7 +2934,7 @@ PRIMARY KEY  (id)
 					),
 				),
 			);
-			$field['settings']['step_highlight'] = $step_highlight;
+			$settings['step_highlight'] = $step_highlight;
 
 			$step_highlight_type = array(
 				'name'           => 'step_highlight_type',
@@ -2942,7 +2942,7 @@ PRIMARY KEY  (id)
 				'default_value'  => 'color',
 				'required'       => true,
 			);
-			$field['settings']['step_highlight_type'] = $step_highlight_type;
+			$settings['step_highlight_type'] = $step_highlight_type;
 
 			$step_highlight_color = array(
 				'name'                => 'step_highlight_color',
@@ -2952,8 +2952,8 @@ PRIMARY KEY  (id)
 				'type'                => 'text',
 				'default_value'       => '#dd3333',
 			);
-			$field['settings']['step_highlight_color'] = $step_highlight_color;
-
+			$settings['step_highlight_color'] = $step_highlight_color;
+			$field['settings'] = $settings;
 			return $field;
 		}
 
