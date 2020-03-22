@@ -273,6 +273,9 @@ if ( class_exists( 'GFForms' ) ) {
 			add_action( 'wp_ajax_gravityflow_export_status', array( $this, 'ajax_export_status' ) );
 			add_action( 'wp_ajax_nopriv_gravityflow_export_status', array( $this, 'ajax_export_status' ) );
 			add_action( 'wp_ajax_gravityflow_download_export', array( $this, 'ajax_download_export' ) );
+
+			add_action( 'wp_ajax_nopriv_gravityflow_render_reports', array( $this, 'ajax_render_workflow_reports' ) );
+			add_action( 'wp_ajax_gravityflow_render_reports', array( $this, 'ajax_render_workflow_reports' ) );
 		}
 
 		/**
@@ -7753,6 +7756,38 @@ AND m.meta_value='queued'";
 			header( 'Expires: 0' );
 
 			echo $file;
+			die();
+		}
+
+		/**
+		 * AJAX helper to render workflow reports.
+         *
+         * @since 2.5.10
+		 */
+		public function ajax_render_workflow_reports() {
+			if ( ! wp_verify_nonce( rgpost( 'nonce' ), 'gravityflow_render_reports' ) ) {
+				$response['status'] = 'error';
+				$response['message'] = __( 'Not authorized', 'gravityflow' );
+				$response_json = json_encode( $response );
+				echo $response_json;
+				die();
+			}
+
+			$args = json_decode( rgpost( 'args' ), true );
+
+			// Get values from the filter, and replace the params if they use "-" instead of "_".
+			$data = array();
+			parse_str( rgpost( 'data' ), $data );
+			foreach ( $data as $key => $arg ) {
+			    unset( $data[ $key ] );
+				$key = str_replace( '-', '_', $key );
+				$data[ $key ] = $arg;
+			}
+
+			$args = array_merge( $args, $data );
+
+			require_once( $this->get_base_path() . '/includes/pages/class-reports.php' );
+			Gravity_Flow_Reports::output_reports( $args );
 			die();
 		}
 

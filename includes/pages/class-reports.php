@@ -59,6 +59,7 @@ class Gravity_Flow_Reports {
 			'assignee_id'       => $assignee_id,
 			'check_permissions' => true,
 			'base_url'          => admin_url( 'admin.php?page=gravityflow-reports' ),
+			'display_filter'    => true,
 		);
 
 		/**
@@ -86,10 +87,12 @@ class Gravity_Flow_Reports {
 		?>
 		<script>var gravityflowFilterVars = <?php echo json_encode( $filter_vars ); ?>;</script>
 
-		<?php if ( $args['display_filter'] ) { ?>
+		<?php if ( rgar( $args, 'display_filter' ) ) { ?>
 			<div id="gravityflow-reports-filter" style="margin:10px 0;">
 			<form method="GET" action="<?php echo esc_url( $args['base_url'] );?>">
 				<input type="hidden" value="gravityflow-reports" name="page" />
+                <input type="hidden" id="gravityflow-reports-nonce" value="<?php echo wp_create_nonce( 'gravityflow_render_reports' ); ?>" />
+                <input type="hidden" id="gravityflow-reports-args" value="<?php esc_attr_e( json_encode( $args ) ); ?>" />
 				<?php self::range_drop_down( $args['range'] ); ?>
 				<?php self::form_drop_down( $args['form_id'] ); ?>
 				<?php self::category_drop_down( $args['category'] ); ?>
@@ -98,9 +101,21 @@ class Gravity_Flow_Reports {
 				<input type="submit" value="<?php esc_html_e( 'Filter', 'gravityflow' )?>" class="button-secondary" />
 			</form>
 			</div>
+		<?php } ?>
+		<div id="gravityflow-reports">
+			<?php self::output_reports( $args ); ?>
+		</div>
 		<?php
-		}
+	}
 
+	/**
+	 * Output reports markup.
+	 *
+	 * @since 2.5.10
+	 *
+	 * @param array $args The arguments.
+	 */
+	public static function output_reports( $args ) {
 		if ( empty( $args['form_id'] ) ) {
 
 			self::report_all_forms( $args );
@@ -130,7 +145,6 @@ class Gravity_Flow_Reports {
 		} else {
 			self::report_form_by_month( $form_id, $args );
 		}
-
 	}
 
 	/**

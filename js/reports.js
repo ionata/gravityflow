@@ -32,6 +32,31 @@
             }
         }
 
+        $('#gravityflow-reports-filter form').on('submit', function(e){
+            if (! $('body').hasClass('wp-admin')) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: ajaxurl,
+                    method: 'POST',
+                    data: {
+                        action: 'gravityflow_render_reports',
+                        nonce: $('#gravityflow-reports-nonce').val(),
+                        args: $('#gravityflow-reports-args').val(),
+                        data: $(this).serialize()
+                    },
+                    success: function (response) {
+                        if(response.status === 'error'){
+                            alert(response.message);
+                        } else {
+                            $('#gravityflow-reports').html(response);
+                            Gravity_Flow_Reports.drawCharts();
+                        }
+                    }
+                });
+            }
+        });
+
         $('#gravityflow-form-drop-down').change(function(){
             $('#gravityflow-reports-category').toggle( this.value ? true : false);
         });
