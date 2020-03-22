@@ -86,19 +86,20 @@ class Gravity_Flow_Reports {
 		?>
 		<script>var gravityflowFilterVars = <?php echo json_encode( $filter_vars ); ?>;</script>
 
-		<div id="gravityflow-reports-filter" style="margin:10px 0;">
-		<form method="GET" action="<?php echo esc_url( $args['base_url'] );?>">
-			<input type="hidden" value="gravityflow-reports" name="page" />
-			<?php self::range_drop_down( $args['range'] ); ?>
-			<?php self::form_drop_down( $args['form_id'] ); ?>
-			<?php self::category_drop_down( $args['category'] ); ?>
-			<select id="gravityflow-reports-steps" style="display:none;" name="step-id"></select>
-			<select id="gravityflow-reports-assignees" style="display:none;" name="assignee"></select>
-			<input type="submit" value="<?php esc_html_e( 'Filter', 'gravityflow' )?>" class="button-secondary" />
-		</form>
-		</div>
+		<?php if ( $args['display_filter'] ) { ?>
+			<div id="gravityflow-reports-filter" style="margin:10px 0;">
+			<form method="GET" action="<?php echo esc_url( $args['base_url'] );?>">
+				<input type="hidden" value="gravityflow-reports" name="page" />
+				<?php self::range_drop_down( $args['range'] ); ?>
+				<?php self::form_drop_down( $args['form_id'] ); ?>
+				<?php self::category_drop_down( $args['category'] ); ?>
+				<select id="gravityflow-reports-steps" style="display:none;" name="step-id"></select>
+				<select id="gravityflow-reports-assignees" style="display:none;" name="assignee"></select>
+				<input type="submit" value="<?php esc_html_e( 'Filter', 'gravityflow' )?>" class="button-secondary" />
+			</form>
+			</div>
 		<?php
-
+		}
 
 		if ( empty( $args['form_id'] ) ) {
 

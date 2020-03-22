@@ -6209,6 +6209,7 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 				'category'         => '',
 				'step_id'          => null,
 				'assignee'         => '',
+				'display_filter'   => true,
 			);
 
 			return $defaults;
@@ -6414,6 +6415,7 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 				'category'              => $a['category'],
 				'step_id'               => $a['step_id'],
 				'assignee'              => $a['assignee'],
+				'display_filter'        => $a['display_filter'],
 				'check_permissions'     => ! $allow_reports,
 			);
 
