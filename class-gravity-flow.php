@@ -712,9 +712,8 @@ PRIMARY KEY  (id)
 					'version' => $this->_version,
 					'deps'    => array( 'jquery', 'sack' ),
 					'enqueue' => array(
-						array(
-							'query' => 'page=gravityflow-inbox',
-						),
+						array( 'query' => 'page=gravityflow-inbox', ),
+						array( 'query' => 'page=gf_entries', ),
 					),
 				),
 				array(
@@ -761,6 +760,8 @@ PRIMARY KEY  (id)
 					),
 				),
 			);
+
+			$magic = true;
 
 			return array_merge( parent::scripts(), $scripts );
 		}
