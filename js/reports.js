@@ -5,6 +5,9 @@
     var stepVars;
 
     $(document).ready(function () {
+        if (typeof gravityflowFilterVars === 'undefined') {
+            return;
+        }
 
         stepVars = gravityflowFilterVars.config;
         var selectedVars = gravityflowFilterVars.selected;
@@ -59,6 +62,13 @@
 
         $('#gravityflow-form-drop-down').change(function(){
             $('#gravityflow-reports-category').toggle( this.value ? true : false);
+
+            // Reset all the other dropdowns.
+            if (this.value) {
+                $('#gravityflow-reports-category').val('month');
+            }
+            $('#gravityflow-reports-steps').hide();
+            $('#gravityflow-reports-assignees').hide();
         });
         $('#gravityflow-reports-category').change(function(){
             var formId = $('#gravityflow-form-drop-down').val();
