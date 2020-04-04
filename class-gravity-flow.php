@@ -807,21 +807,62 @@ PRIMARY KEY  (id)
 		}
 
 		/**
-		 * Determines if the gravityflow shortcode is used in the post content.
+		 * Determines if at least one of the posts for the current WP query contains the shortcode or block.
 		 *
 		 * @return bool
 		 */
 		public function look_for_shortcode() {
 			global $wp_query;
 
-			$shortcode_found = false;
 			foreach ( $wp_query->posts as $post ) {
-				if ( stripos( $post->post_content, '[gravityflow' ) !== false || stripos( $post->post_content, '<!-- wp:gravityflow/' ) !== false ) {
-					$shortcode_found = true;
-					break;
+				if ( $post instanceof WP_Post && $this->has_shortcode_or_block( $post->post_content ) ) {
+					return true;
 				}
 			}
-			return $shortcode_found;
+
+			return false;
+		}
+
+		/**
+		 * Determines if the supplied post content contains the shortcode or block (also checks post content for reusable blocks).
+		 *
+		 * @since 2.5.10
+		 *
+		 * @param string $post_content The post content to be checked.
+		 *
+		 * @return bool
+		 */
+		public function has_shortcode_or_block( $post_content ) {
+			if ( empty( $post_content ) ) {
+				return false;
+			}
+
+			if ( stripos( $post_content, '[gravityflow' ) !== false || stripos( $post_content, '<!-- wp:gravityflow/' ) !== false ) {
+				return true;
+			}
+
+			if ( ! function_exists( 'has_block' ) || ! has_block( 'block', $post_content ) ) {
+				return false;
+			}
+
+			$blocks = parse_blocks( $post_content );
+
+			foreach ( $blocks as $block ) {
+				if ( rgar( $block, 'blockName' ) !== 'core/block' || empty( $block['attrs']['ref'] ) ) {
+					continue;
+				}
+
+				$reusable_block = get_post( $block['attrs']['ref'] );
+				if ( empty( $reusable_block ) || $reusable_block->post_type !== 'wp_block' ) {
+					continue;
+				}
+
+				if ( $this->has_shortcode_or_block( $reusable_block->post_content ) ) {
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		/**
