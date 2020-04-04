@@ -118,15 +118,18 @@
         $('.gravityflow_chart').each(function () {
             var $this = $(this);
             var dataTable = $this.data('table');
-            var data = google.visualization.arrayToDataTable(dataTable);
+console.log(dataTable);
+            if (typeof dataTable !== 'undefined') {
+                var data = google.visualization.arrayToDataTable(dataTable);
 
-            var options = $this.data('options');
+                var options = $this.data('options');
 
-            var chartType = $this.data('type');
+                var chartType = $this.data('type');
 
-            var chart = new google.charts[chartType]( this );
+                var chart = new google.charts[chartType]( this );
 
-            chart.draw(data, options);
+                chart.draw(data, options);
+            }
         })
     }
 

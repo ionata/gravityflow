@@ -149,10 +149,16 @@ class Gravity_Flow_Reports {
 
 	/**
 	 * Output the report for all forms.
+     *
+     * @since unknown
+     * @since 2.5.10  Added the param $context.
 	 *
-	 * @param array $args The reports page arguments.
+	 * @param array  $args    The reports page arguments.
+     * @param string $context The context of the data requested, can be 'html' or 'json'.
+     *
+     * @return array
 	 */
-	public static function report_all_forms( $args ) {
+	public static function report_all_forms( $args, $context = 'html' ) {
 
 		$defaults = array(
 			'start_date'        => date( 'Y-m-d', strtotime( '-1 year' ) ),
@@ -203,7 +209,11 @@ class Gravity_Flow_Reports {
 		$data_table_json = htmlentities( json_encode( $chart_data ), ENT_QUOTES, 'UTF-8', true );
 		$options_json    = htmlentities( json_encode( $chart_options ), ENT_QUOTES, 'UTF-8', true );
 
-		echo '<div id="gravityflow_chart_top_level" style="padding:20px;background-color:white;" class="gravityflow_chart" data-type="Bar" data-table="' . $data_table_json . '" data-options="' . $options_json . '""></div>';
+		if ( $context === 'html' ) {
+			echo '<div id="gravityflow_chart_top_level" style="padding:20px;background-color:white;" class="gravityflow_chart" data-type="Bar" data-table="' . $data_table_json . '" data-options="' . $options_json . '""></div>';
+        } else {
+		    return array( 'table' => json_encode( $chart_data ), 'options' => json_encode( $chart_options ) );
+        }
 	}
 
 	/**
