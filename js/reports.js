@@ -118,7 +118,7 @@
         $('.gravityflow_chart').each(function () {
             var $this = $(this);
             var dataTable = $this.data('table');
-console.log(dataTable);
+
             if (typeof dataTable !== 'undefined') {
                 var data = google.visualization.arrayToDataTable(dataTable);
 
