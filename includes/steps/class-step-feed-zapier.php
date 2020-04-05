@@ -30,7 +30,7 @@ class Gravity_Flow_Step_Feed_Zapier extends Gravity_Flow_Step_Feed_Add_On {
 	 *
 	 * @var string
 	 */
-	protected $_class_name = 'GFZapier';
+	protected $_class_name = 'GF_Zapier';
 
 	/**
 	 * The slug used by the add-on.
@@ -64,13 +64,10 @@ class Gravity_Flow_Step_Feed_Zapier extends Gravity_Flow_Step_Feed_Add_On {
 	 */
 	public function get_feeds() {
 		if ( class_exists( 'GFZapierData' ) ) {
-			$form_id = $this->get_form_id();
-			$feeds   = GFZapierData::get_feed_by_form( $form_id );
-		} else {
-			$feeds = array();
+			return GFZapierData::get_feed_by_form( $this->get_form_id() );
 		}
 
-		return $feeds;
+		return parent::get_feeds();
 	}
 
 	/**
@@ -81,17 +78,22 @@ class Gravity_Flow_Step_Feed_Zapier extends Gravity_Flow_Step_Feed_Add_On {
 	 * @return bool Is feed processing complete?
 	 */
 	public function process_feed( $feed ) {
-		$form  = $this->get_form();
-		$entry = $this->get_entry();
 
 		// If the step is delayed, there might be several entries to be processed at the same time,
 		// don't use the stored body, or the first entry in queue will be used as the body for all entries.
 		add_filter( 'gform_zapier_use_stored_body', '__return_false' );
 
-		if ( method_exists( 'GFZapier', 'process_feed' ) ) {
-			GFZapier::process_feed( $feed, $entry, $form );
+		if ( class_exists( 'GFZapier' ) ) {
+			$form  = $this->get_form();
+			$entry = $this->get_entry();
+
+			if ( method_exists( 'GFZapier', 'process_feed' ) ) {
+				GFZapier::process_feed( $feed, $entry, $form );
+			} else {
+				GFZapier::send_form_data_to_zapier( $entry, $form );
+			}
 		} else {
-			GFZapier::send_form_data_to_zapier( $entry, $form );
+			parent::process_feed( $feed );
 		}
 
 		return true;
@@ -101,7 +103,11 @@ class Gravity_Flow_Step_Feed_Zapier extends Gravity_Flow_Step_Feed_Add_On {
 	 * Prevent the feeds assigned to the current step from being processed by the associated add-on.
 	 */
 	public function intercept_submission() {
-		remove_action( 'gform_after_submission', array( 'GFZapier', 'send_form_data_to_zapier' ) );
+		if ( class_exists( 'GFZapier' ) ) {
+			remove_action( 'gform_after_submission', array( 'GFZapier', 'send_form_data_to_zapier' ) );
+		} else {
+			parent::intercept_submission();
+		}
 	}
 
 	/**
@@ -112,7 +118,11 @@ class Gravity_Flow_Step_Feed_Zapier extends Gravity_Flow_Step_Feed_Add_On {
 	 * @return string
 	 */
 	public function get_feed_label( $feed ) {
-		return $feed['name'];
+		if ( isset( $feed['name'] ) ) {
+			return $feed['name'];
+		}
+
+		return parent::get_feed_label( $feed );
 	}
 
 	/**
@@ -125,9 +135,46 @@ class Gravity_Flow_Step_Feed_Zapier extends Gravity_Flow_Step_Feed_Add_On {
 	 * @return bool
 	 */
 	public function is_feed_condition_met( $feed, $form, $entry ) {
+		if ( class_exists( 'GFZapier' ) ) {
+			return GFZapier::conditions_met( $form, $feed, $entry );
+		}
 
-		return GFZapier::conditions_met( $form, $feed, $entry );
+		return parent::is_feed_condition_met( $feed, $form, $entry );
 	}
+
+	/**
+	 * Returns the class name for the add-on.
+	 *
+	 * @since 2.5.10
+	 *
+	 * @return string
+	 */
+	public function get_feed_add_on_class_name() {
+		if ( class_exists( 'GFZapier' ) ) {
+			$this->_class_name = 'GFZapier';
+		}
+
+		return parent::get_feed_add_on_class_name();
+	}
+
+	/**
+	 * Determines if this step type is supported.
+	 *
+	 * @since 2.5.10
+	 *
+	 * @return bool
+	 */
+	public function is_supported() {
+		$is_supported = parent::is_supported();
+
+		if ( $is_supported && class_exists( 'GF_Zapier' ) && gravity_flow()->is_form_settings() ) {
+			// Zapier v4.0 feed config is only available if a feed already exists for the form.
+			$is_supported = gf_zapier()->has_feed( $this->get_form_id() );
+		}
+
+		return $is_supported;
+	}
+
 }
 
 Gravity_Flow_Steps::register( new Gravity_Flow_Step_Feed_Zapier() );
