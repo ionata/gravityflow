@@ -21,12 +21,17 @@ class Gravity_Flow_Step_Feed_Zapier extends Gravity_Flow_Step_Feed_Add_On {
 	/**
 	 * The step type.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @var string
 	 */
 	public $_step_type = 'zapier';
 
 	/**
 	 * The name of the class used by the add-on.
+	 *
+	 * @since 1.0.0
+	 * @since 2.5.10 Updated to support Zapier v4.0
 	 *
 	 * @var string
 	 */
@@ -35,12 +40,16 @@ class Gravity_Flow_Step_Feed_Zapier extends Gravity_Flow_Step_Feed_Add_On {
 	/**
 	 * The slug used by the add-on.
 	 *
+	 * @since 1.8.0
+	 *
 	 * @var string
 	 */
 	protected $_slug = 'gravityformszapier';
 
 	/**
 	 * Returns the step label.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -51,6 +60,8 @@ class Gravity_Flow_Step_Feed_Zapier extends Gravity_Flow_Step_Feed_Add_On {
 	/**
 	 * Returns the URL for the step icon.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @return string
 	 */
 	public function get_icon_url() {
@@ -59,6 +70,9 @@ class Gravity_Flow_Step_Feed_Zapier extends Gravity_Flow_Step_Feed_Add_On {
 
 	/**
 	 * Returns the feeds for the add-on.
+	 *
+	 * @since 1.0.0
+	 * @since 2.5.10 Updated to support Zapier v4.0
 	 *
 	 * @return array
 	 */
@@ -72,6 +86,9 @@ class Gravity_Flow_Step_Feed_Zapier extends Gravity_Flow_Step_Feed_Add_On {
 
 	/**
 	 * Processes the given feed for the add-on.
+	 *
+	 * @since 1.0.0
+	 * @since 2.5.10 Updated to support Zapier v4.0
 	 *
 	 * @param array $feed The add-on feed properties.
 	 *
@@ -101,6 +118,9 @@ class Gravity_Flow_Step_Feed_Zapier extends Gravity_Flow_Step_Feed_Add_On {
 
 	/**
 	 * Prevent the feeds assigned to the current step from being processed by the associated add-on.
+	 *
+	 * @since 1.0.0
+	 * @since 2.5.10 Updated to support Zapier v4.0
 	 */
 	public function intercept_submission() {
 		if ( class_exists( 'GFZapier' ) ) {
@@ -112,6 +132,9 @@ class Gravity_Flow_Step_Feed_Zapier extends Gravity_Flow_Step_Feed_Add_On {
 
 	/**
 	 * Returns the feed name.
+	 *
+	 * @since 1.0.0
+	 * @since 2.5.10 Updated to support Zapier v4.0
 	 *
 	 * @param array $feed The feed properties.
 	 *
@@ -127,6 +150,9 @@ class Gravity_Flow_Step_Feed_Zapier extends Gravity_Flow_Step_Feed_Add_On {
 
 	/**
 	 * Determines if the supplied feed should be processed.
+	 *
+	 * @since 1.3.2
+	 * @since 2.5.10 Updated to support Zapier v4.0
 	 *
 	 * @param array $feed  The current feed.
 	 * @param array $form  The current form.
