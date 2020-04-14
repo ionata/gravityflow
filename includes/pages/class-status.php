@@ -183,8 +183,8 @@ class Gravity_Flow_Status {
 		$total_items = (int) $table->get_pagination_arg( 'total_items' );
 		$total_pages = (int) $table->get_pagination_arg( 'total_pages' );
 
-		$status   = $page == $total_pages ? 'complete' : 'incomplete';
-		$percent  = $page * $per_page / $total_items * 100;
+		$status   = $page < $total_pages ? 'incomplete' : 'complete';
+		$percent  = $total_items > 0 ? $page * $per_page / $total_items * 100 : 100;
 		$response = array( 'status' => $status, 'percent' => (int) $percent );
 
 		if ( $status == 'complete' ) {
@@ -2176,6 +2176,10 @@ class Gravity_Flow_Status_Table extends WP_List_Table {
 				}
 			}
 			$rows[] = join( ',', $row_values );
+		}
+
+		if ( empty($rows) ) {
+			return $export;
 		}
 
 		$export .= join( "\r\n", $rows );
